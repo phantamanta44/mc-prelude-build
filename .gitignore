@@ -1,0 +1,15 @@
+# JetBrains stuff
+/.idea/
+/.kotlin/
+*.ipr
+*.iml
+
+# Compilation output
+/target/
+/build/
+/out/
+/classes/
+
+# Gradle stuff
+/.gradle/
+
