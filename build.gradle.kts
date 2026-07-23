@@ -34,7 +34,6 @@ dependencies {
     implementation(plugin(libs.plugins.idea.ext))
 }
 
-@CacheableTask
 abstract class InjectDependencyVersionsTask : DefaultTask() {
     @get:Input
     abstract val versions: MapProperty<String, Dependency>
