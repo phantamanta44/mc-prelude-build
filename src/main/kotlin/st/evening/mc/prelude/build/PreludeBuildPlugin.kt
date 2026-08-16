@@ -162,6 +162,13 @@ class PreludeBuildPlugin : Plugin<Project> {
                     }
                 }
             )
+            extraArgs.addAll(
+                ext.presets.mixin.enable.flatMap { enabled ->
+                    ext.presets.mixin.mixinConfigs.map { mixinConfigs ->
+                        if (enabled) mixinConfigs.flatMap { listOf("--mixin", it) } else emptyList()
+                    }
+                }
+            )
         }
         tasks.named<RunMinecraftTask>("runClient") { configureDevRun() }
         tasks.named<RunMinecraftTask>("runServer") { configureDevRun() }
@@ -220,15 +227,29 @@ class PreludeBuildPlugin : Plugin<Project> {
         tasks.named<Jar>("jar") {
             manifest { mf -> // not lazy, but the laziness of task evaluation *should* save us here
                 val atFile = ext.mod.accessTransformerFile.get()
-                if (!atFile.isBlank()) {
+                if (atFile.isNotBlank()) {
                     mf.attributes("FMLAT" to atFile)
                 }
                 val lpClass = ext.mod.loadingPluginClass.get()
-                if (!lpClass.isBlank()) {
+                if (lpClass.isNotBlank()) {
                     mf.attributes(
                         "FMLCorePlugin" to "${ext.basePackage.get()}.$lpClass",
                         "FMLCorePluginContainsFMLMod" to "true"
                     )
+                }
+                if (ext.presets.mixin.enable.get()) {
+                    val configs = ext.presets.mixin.mixinConfigs.get()
+                    if (configs.isNotEmpty()) {
+                        mf.attributes(
+                            "MixinConfigs" to configs.joinToString(",")
+                        )
+                    }
+                    val cxClass = ext.presets.mixin.mixinConnectorClass.get()
+                    if (cxClass.isNotEmpty()) {
+                        mf.attributes(
+                            "MixinConnector" to "${ext.basePackage.get()}.$cxClass"
+                        )
+                    }
                 }
             }
         }
@@ -239,7 +260,7 @@ class PreludeBuildPlugin : Plugin<Project> {
             mavenLocal()
             maven {
                 it.name = "CleanroomMC"
-                it.url = URI.create("https://repo.cleanroommc.com/releases")
+                it.url = URI.create("https://maven.cleanroommc.com")
             }
         }
 
@@ -249,14 +270,13 @@ class PreludeBuildPlugin : Plugin<Project> {
             dependencies.add(IMPLEMENTATION, PreludeDeps.KOTLIN_REFLECT, PreludeDeps.KOTLIN_REFLECT_VERSION)
             dependencies.inc(RUNTIME_ONLY, PreludeDeps.FORGELIN_CONTINUOUS, depExt.forgelinVersion)
 
-            if (ext.presets.mixin.enable.get() && ext.presets.mixin.includeDeps.get()) {
-                dependencies.inc(ANNOTATION_PROCESSOR, PreludeDeps.ASM_DEBUG_ALL, depExt.asmVersion)
-                dependencies.inc(ANNOTATION_PROCESSOR, PreludeDeps.GUAVA, depExt.guavaVersion)
-                dependencies.inc(ANNOTATION_PROCESSOR, PreludeDeps.GSON, depExt.gsonVersion)
+            if (ext.presets.mixin.enable.get()) {
                 val mixinBooter = buildDepNotation(PreludeDeps.MIXINBOOTER, depExt.mixinBooterVersion)
                 extensions.getByType<ModUtils>().enableMixins(mixinBooter, ext.presets.mixin.refMapFileName.get())
-                dependencies.add(API, mixinBooter) { isTransitive = false }
-                dependencies.add(ANNOTATION_PROCESSOR, mixinBooter) { isTransitive = false }
+                if (ext.presets.mixin.includeDeps.get()) {
+                    dependencies.add(API, mixinBooter) { isTransitive = false }
+                    dependencies.add(ANNOTATION_PROCESSOR, mixinBooter)
+                }
             }
 
             if (ext.presets.prelude.enable.get() && ext.presets.prelude.includeDeps.get()) {

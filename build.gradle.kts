@@ -62,16 +62,18 @@ abstract class InjectDependencyVersionsTask : DefaultTask() {
 }
 
 val injectDepVersionsDir: Provider<Directory> = layout.buildDirectory.dir("generated/sources/injectDepVersions")
-val injectDepVersionsTask = tasks.register<InjectDependencyVersionsTask>("injectDepVersions") {
-    versions.set(
-        libs.bundles.downstream.map { bundle ->
-            buildMap<String, Dependency> {
-                bundle.forEach { put(it.name.replace('-', '_').uppercase(), it) }
+val injectDepVersionsTask: TaskProvider<InjectDependencyVersionsTask> =
+    tasks.register<InjectDependencyVersionsTask>("injectDepVersions") {
+        description = "Generates a PreludeDeps source file with version information drawn from the version catalog."
+        versions.set(
+            libs.bundles.downstream.map { bundle ->
+                buildMap {
+                    bundle.forEach { put(it.name.replace('-', '_').uppercase(), it) }
+                }
             }
-        }
-    )
-    outputDir.set(injectDepVersionsDir)
-}
+        )
+        outputDir.set(injectDepVersionsDir)
+    }
 
 val injectedDepVersions: SourceSet = sourceSets.create("injectedDepVersions") {
     java {

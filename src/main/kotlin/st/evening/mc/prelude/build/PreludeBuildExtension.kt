@@ -2,6 +2,7 @@ package st.evening.mc.prelude.build
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 interface ModSpec {
@@ -25,9 +26,6 @@ interface MinecraftSpec {
 interface DependenciesSpec {
     val jspecifyVersion: Property<String>
     val forgelinVersion: Property<String>
-    val asmVersion: Property<String>
-    val guavaVersion: Property<String>
-    val gsonVersion: Property<String>
     val mixinBooterVersion: Property<String>
     val ktInvokeControlVersion: Property<String>
     val preludeVersion: Property<String>
@@ -40,6 +38,8 @@ interface PresetSpec {
 
 interface MixinPresetSpec : PresetSpec {
     val refMapFileName: Property<String>
+    val mixinConfigs: ListProperty<String>
+    val mixinConnectorClass: Property<String>
 }
 
 interface PresetsSpec {
@@ -87,9 +87,6 @@ internal fun PreludeBuildExtension.configureConventions(project: Project) {
     dependencies.run {
         jspecifyVersion.convention(PreludeDeps.JSPECIFY_VERSION)
         forgelinVersion.convention(PreludeDeps.FORGELIN_CONTINUOUS_VERSION)
-        asmVersion.convention(PreludeDeps.ASM_DEBUG_ALL_VERSION)
-        guavaVersion.convention(PreludeDeps.GUAVA_VERSION)
-        gsonVersion.convention(PreludeDeps.GSON_VERSION)
         mixinBooterVersion.convention(PreludeDeps.MIXINBOOTER_VERSION)
         ktInvokeControlVersion.convention(PreludeDeps.KT_INVOKE_CONTROL_LIB_VERSION)
         preludeVersion.convention(PreludeDeps.PRELUDE_1_12_2_VERSION)
@@ -97,6 +94,8 @@ internal fun PreludeBuildExtension.configureConventions(project: Project) {
     presets.run {
         mixin.configureConventions()
         mixin.refMapFileName.convention(modId.map { "mixins.$it.refmap.json" })
+        mixin.mixinConfigs.convention(modId.map { listOf("$it.mixin.json") })
+        mixin.mixinConnectorClass.convention("")
         prelude.configureConventions()
     }
 }

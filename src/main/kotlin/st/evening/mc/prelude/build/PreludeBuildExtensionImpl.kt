@@ -2,7 +2,9 @@ package st.evening.mc.prelude.build
 
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 
@@ -28,9 +30,6 @@ internal abstract class PreludeBuildExtensionImpl(objects: ObjectFactory) : Prel
     private class DependenciesSpecImpl(objects: ObjectFactory) : DependenciesSpec {
         override val jspecifyVersion: Property<String> = objects.property()
         override val forgelinVersion: Property<String> = objects.property()
-        override val asmVersion: Property<String> = objects.property()
-        override val guavaVersion: Property<String> = objects.property()
-        override val gsonVersion: Property<String> = objects.property()
         override val mixinBooterVersion: Property<String> = objects.property()
         override val ktInvokeControlVersion: Property<String> = objects.property()
         override val preludeVersion: Property<String> = objects.property()
@@ -43,6 +42,8 @@ internal abstract class PreludeBuildExtensionImpl(objects: ObjectFactory) : Prel
 
     private class MixinPresetSpecImpl(objects: ObjectFactory) : PresetSpecImpl(objects), MixinPresetSpec {
         override val refMapFileName: Property<String> = objects.property()
+        override val mixinConfigs: ListProperty<String> = objects.listProperty()
+        override val mixinConnectorClass: Property<String> = objects.property()
     }
 
     private class PresetsSpecImpl(objects: ObjectFactory) : PresetsSpec {
