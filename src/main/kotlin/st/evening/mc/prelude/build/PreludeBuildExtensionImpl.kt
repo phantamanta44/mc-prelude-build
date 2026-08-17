@@ -50,7 +50,7 @@ internal abstract class PreludeBuildExtensionImpl(objects: ObjectFactory) : Prel
         override val mixin: MixinPresetSpec = MixinPresetSpecImpl(objects)
         override val prelude: PresetSpec = PresetSpecImpl(objects)
 
-        override fun mixin(action: Action<PresetSpec>) {
+        override fun mixin(action: Action<MixinPresetSpec>) {
             action.execute(mixin)
         }
 

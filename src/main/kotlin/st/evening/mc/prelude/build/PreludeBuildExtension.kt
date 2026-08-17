@@ -46,7 +46,7 @@ interface PresetsSpec {
     val mixin: MixinPresetSpec
     val prelude: PresetSpec
 
-    fun mixin(action: Action<PresetSpec>)
+    fun mixin(action: Action<MixinPresetSpec>)
     fun prelude(action: Action<PresetSpec>)
 }
 
