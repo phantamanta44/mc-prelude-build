@@ -1,13 +1,13 @@
 [versions]
-kotlin = "2.3.20"
+kotlin = "2.4.20"
 idea-ext = "1.1.7"
-retro-futura-gradle = "2.0.2"
-kt-invoke-control-plugin = "2.3.20-0.1.0"
+retro-futura-gradle = "2.0.6"
+kt-invoke-control-plugin = "2.4.20-0.1.0"
 
 jspecify = "1.0.0"
-forgelin = "2.3.20.0"
+forgelin = "2.4.20.0"
 
-mixin-booter = "11.0"
+mixin-booter = "12.2"
 
 kt-invoke-control-lib = "0.1.0"
 prelude = "0.0.1"
