@@ -195,7 +195,7 @@ class PreludeBuildPlugin : Plugin<Project> {
             compilerOptions {
                 freeCompilerArgs.addAll(
                     ext.presets.prelude.enable.map {
-                        if (it) listOf("-Xcontext-parameters", "-Xdont-warn-on-error-suppression") else emptyList()
+                        if (it) listOf("-Xdont-warn-on-error-suppression") else emptyList()
                     }
                 )
             }
